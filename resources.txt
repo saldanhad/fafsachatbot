@@ -1,0 +1,40 @@
+
+    The purpose of the SFAI - Virtual Assistant Application is to assist students and parents 
+    in obtaining information on student financial aid. 
+    
+    It operates as a chat application and is trained on PDF documents sourced from 
+    student financial aid websites. The app serves as a helpful resource by providing
+    a glossary of terms and serving as a starting point for individuals who are 
+    considering student financial aid.
+    However, it is important to note that the application is provided "as is" and 
+    "as available," and users should verify the information with official sources 
+    as there are no guarantees regarding its completeness, accuracy, reliability,
+    suitability, or availability. Users should rely on the information provided by 
+    the application at their own risk.
+
+    The Application's information is not guaranteed to be accurate or complete. 
+    The training data is sourced from openly available information on student financial 
+    aid and department of education websites. While efforts are made to keep the information 
+    up-to-date and correct, no warranties are made regarding its completeness, accuracy, 
+    reliability, suitability, or availability. Users should verify the information provided 
+    by the Application with official sources.
+
+    By using this Application, users signify their acceptance of the terms and 
+    conditions outlined in this disclaimer. If users do not agree to these terms, 
+    they should not use the Application.
+
+    
+
+Links to resources used to train the model
+
+PDF Handbook 2023-2024:
+https://fsapartners.ed.gov/knowledge-center/fsa-handbook
+
+All PDF files in :
+https://financialaidtoolkit.ed.gov/tk/resources/all.jsp?sort=type
+
+Multiple webpages from: https://studentaid.gov/
+
+You can change the theme and enable wide screen mode by navigating to the hamburger icon
+on the top right corner. You can also use the print command to save the conversation as a pdf
+file.
