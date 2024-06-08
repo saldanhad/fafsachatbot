@@ -84,23 +84,39 @@ if 'buttonaccept' not in st.session_state:
 
 
 
-# Supabase PostgreSQL database connection
+# Supabase PostgreSQL database connection from secrets on streamlitapp
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 def create_connection():
-    conn = psycopg2.connect(DATABASE_URL)
-    return conn
-
-#name of table changed to fafsachatapp
-def inserttodb(prompt,full_response,feedback):
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        print("Connection successful")
+        return conn
+    except psycopg2.Error as e:
+        print("Unable to connect to the database")
+        print(e)
+        return None
+        
+#table named fafschatapp
+def inserttodb(prompt, full_response, feedback):
     conn = create_connection()
-    cursor = conn.cursor()
-    insert_query = "INSERT INTO fafsachatapp (prompt, full_response, feedback) VALUES (%s, %s, %s)"
-    cursor.execute(insert_query,(prompt,full_response, feedback))
-    conn.commit()
-    cursor.close()
-    conn.close() 
-
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            insert_query = "INSERT INTO fafschatapp (prompt, full_response, feedback) VALUES (%s, %s, %s)"
+            cursor.execute(insert_query, (prompt, full_response, feedback))
+            conn.commit()
+            print("Data inserted successfully")
+        except psycopg2.Error as e:
+            print("Failed to insert data")
+            print(e)
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+    else:
+        print("Connection to database failed. Data not inserted.")
 
 #The code consists of two main functions: run_app and clicked.
 
