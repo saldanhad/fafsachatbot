@@ -84,18 +84,18 @@ if 'buttonaccept' not in st.session_state:
 
 
 
-# ElephantSQL PostgreSQL database connection
+# Supabase PostgreSQL database connection
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 def create_connection():
     conn = psycopg2.connect(DATABASE_URL)
     return conn
 
-
+#name of table changed to fafsachatapp
 def inserttodb(prompt,full_response,feedback):
     conn = create_connection()
     cursor = conn.cursor()
-    insert_query = "INSERT INTO feedback_chatapp (prompt, full_response, feedback) VALUES (%s, %s, %s)"
+    insert_query = "INSERT INTO fafsachatapp (prompt, full_response, feedback) VALUES (%s, %s, %s)"
     cursor.execute(insert_query,(prompt,full_response, feedback))
     conn.commit()
     cursor.close()
