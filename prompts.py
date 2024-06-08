@@ -4,6 +4,8 @@ from langchain.chains.question_answering import load_qa_chain
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import faiss
 from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
 import os
 from dotenv import load_dotenv
 import pickle
@@ -15,14 +17,19 @@ from pathlib import Path
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import LLMChainExtractor
 
-
 # Set up paths, environment variables, and connections
 PATH = Path.cwd()
 dotenv_path = str(PATH) + "/.env"
 load_dotenv(dotenv_path)
 
+#invoke api key
+os.environ["OPENAI_API_KEY"] = os.getenv('openai_api_key')
+openai.api_key = os.environ["OPENAI_API_KEY"]
+
 connection_string = os.getenv('AZURE_CONNECTION_STRING')
 container_name = os.getenv('AZURE_CONTAINER_NAME')
+embeddings = OpenAIEmbeddings()
+
 
 blob_service_client = BlobServiceClient.from_connection_string(connection_string)
 
@@ -33,13 +40,15 @@ def load_from_blob(blob_name):
     data = pickle.loads(serialized_data)
     return data
 
-# Load the Faiss index and OpenAI model
-db = load_from_blob('embeddings.pkl')
-faissindex = faiss.deserialize_index(load_from_blob('faissindex.pkl'))
-db.index = faissindex
+try:
+    faiss_index = load_from_blob('index.pkl')
+    print(type(faiss_index))  # Should print: <class 'bytes'>
 
-os.environ["OPENAI_API_KEY"] = os.getenv('openai_api_key')
-openai.api_key = os.environ["OPENAI_API_KEY"]
+    db = FAISS.deserialize_from_bytes(embeddings=embeddings, serialized=faiss_index)
+except Exception as e:
+    print(f"Error during deserialization: {e}")
+
+# Load the OpenAI model
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
 
 # Define your prompt template/ prompt engineering
@@ -102,7 +111,7 @@ Question : {question}
 """
 
 # Keywords to limit context inference
-keywords = [
+keywords = ['aid','this aid','max amount','eligible',
     'fafsa','student aid','financial aid', 'scholarship', 'grant', 'loan', 'FAFSA', 'EFC', 'Pell Grant', 'work-study', 'tuition assistance', 'need-based aid',
     'merit-based aid', 'college savings', 'fellowship', 'educational grants', 'student loans', 'student employment', 'college scholarships',
     'college grants', 'financial aid application', 'financial aid eligibility', 'financial aid package', 'financial aid award', 'student financial services',
